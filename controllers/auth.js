@@ -1,6 +1,7 @@
-const User = require('../models/user');
+const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
+  console.log(req.session[1]);
   // const isLoggedIn = req.session;
   res.render("auth/login", {
     path: "/login",
@@ -14,8 +15,11 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       req.session.isLoggedIn = true;
       // 'user' is mongoose object here
-      req.user = user;
-      res.redirect("/");
+      req.session.user = user;
+      req.session.save((err) => {
+        console.log(err);
+        res.redirect("/");
+      });
     })
     .catch((err) => console.log(err));
 };
