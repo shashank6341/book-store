@@ -16,8 +16,6 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 
-console.log(store);
-
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -44,7 +42,6 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
-      console.log("Hi");
       // 'user' is mongoose object here
       req.user = user;
       next();
