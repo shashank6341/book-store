@@ -59,19 +59,6 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then((result) => {
     console.log("mongoDB Connected");
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: process.env.Test_Name,
-          email: process.env.Test_Email,
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
-
     app.listen(3000);
   })
   .catch((err) => {

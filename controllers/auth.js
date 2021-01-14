@@ -33,7 +33,27 @@ exports.postLogout = (req, res, next) => {
   });
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+
+  User.findOne({ email: email })
+    .then((existingUser) => {
+      if (existingUser) {
+        return res.redirect("/signup");
+      }
+      const user = new User({
+        email: email,
+        password: password,
+      });
+      return user.save();
+    })
+    .then((success) => {
+      res.redirect("/login");
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
