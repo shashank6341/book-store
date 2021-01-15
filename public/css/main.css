@@ -225,12 +225,31 @@ form {
   color: white;
 }
 
+.user-message {
+  margin: auto;
+  width: 90%;
+  padding: 1 rem;
+  border-radius: 3px;
+  border: 1px solid #4771fa;
+  background: #8ea8fd;
+  text-align: center;
+}
+
+.user-message--error {
+  border-color: red;
+  background: rgb(255, 176, 176);
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
   }
 
+  .user-message {
+    width: 30rem;
+  }
   #side-menu-toggle {
     display: none;
   }
 }
+
