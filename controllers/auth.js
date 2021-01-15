@@ -1,13 +1,35 @@
+require("dotenv").config();
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const Mailgen = require("mailgen");
 
 const User = require("../models/user");
 
+// MARK : Mail Section
+
+let transporter = nodemailer.createTransport({
+  service: "Yahoo",
+  secure: true,
+  auth: {
+    user: process.env.Email_From,
+    pass: process.env.Email_password,
+  },
+});
+
+let MailGenerator = new Mailgen({
+  theme: "neopolitan",
+  product: {
+    name: "Book Store",
+    link: "http://localhost:3000/",
+  },
+});
+
+// MARK : Methods Section
 exports.getLogin = (req, res, next) => {
-  let message = req.flash('error');
-  if(message) {
+  let message = req.flash("error");
+  if (message) {
     message = message[0];
-  }
-  else {
+  } else {
     message = null;
   }
   res.render("auth/login", {
@@ -18,11 +40,10 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
-  let message = req.flash('error');
-  if(message) {
+  let message = req.flash("error");
+  if (message) {
     message = message[0];
-  }
-  else {
+  } else {
     message = null;
   }
   res.render("auth/signup", {
@@ -85,7 +106,26 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect("/login");
-        });
+
+          let mail = MailGenerator.generate({
+            body: {
+              name: email,
+              intro:
+                "Welcome to Book-Store! We're very excited to have you on board.",
+            },
+          });
+
+          return transporter.sendMail({
+            from: process.env.Email_From,
+            to: email,
+            subject: "Signup Successful",
+            html: mail,
+          });
+        })
+        .then(() => {
+          console.log('Mail Sent!');
+        })
+        .catch((error) => console.error(error));
     })
     .catch((err) => {
       console.log(err);
