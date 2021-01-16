@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
+const { validationResult } = require("express-validator/check");
 
 const User = require("../models/user");
 
@@ -90,48 +91,48 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash("error", "Email already exists.");
-        return res.redirect("/signup");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new User({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then((result) => {
-          res.redirect("/login");
+  const errors = validationResult(req);
 
-          let mail = MailGenerator.generate({
-            body: {
-              name: email,
-              intro:
-                "Welcome to Book-Store! We're very excited to have you on board.",
-            },
-          });
-
-          return transporter.sendMail({
-            from: process.env.Email_From,
-            to: email,
-            subject: "Signup Successful",
-            html: mail,
-          });
-        })
-        .then(() => {
-          console.log("Mail Sent!");
-        })
-        .catch((error) => console.error(error));
-    })
-    .catch((err) => {
-      console.log(err);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
     });
+  }
+
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+
+      let mail = MailGenerator.generate({
+        body: {
+          name: email,
+          intro:
+            "Welcome to Book-Store! We're very excited to have you on board.",
+        },
+      });
+
+      return transporter.sendMail({
+        from: process.env.Email_From,
+        to: email,
+        subject: "Signup Successful",
+        html: mail,
+      });
+    })
+    .then(() => {
+      console.log("Mail Sent!");
+    })
+    .catch((error) => console.error(error));
 };
 
 exports.postLogout = (req, res, next) => {
@@ -235,8 +236,8 @@ exports.postNewPassword = (req, res, next) => {
       resetUser.resetTokenExpiration = undefined;
       return resetUser.save();
     })
-    .then(result => {
-      return res.redirect('/');
+    .then((result) => {
+      return res.redirect("/");
     })
     .catch((error) => console.error(error));
 };
