@@ -183,7 +183,9 @@ form {
 }
 
 .card__image img {
-  width: 100%;
+  /* width: 100%; */
+  width:  100%;
+  object-fit: cover;
 }
 
 .card__actions {

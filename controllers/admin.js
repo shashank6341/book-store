@@ -46,14 +46,12 @@ exports.postAddProduct = (req, res, next) => {
       product: {
         title: title,
         price: price,
-        imageUrl: imageUrl,
         description: description,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
     });
   }
-
   const imageUrl = image.path;
 
   const product = new Product({
@@ -86,6 +84,7 @@ exports.postAddProduct = (req, res, next) => {
       //   validationErrors: [],
       // });
       // res.redirect('/500');
+      console.log(err);
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);

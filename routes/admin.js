@@ -1,5 +1,3 @@
-const path = require("path");
-
 const express = require("express");
 const { body } = require("express-validator/check");
 
@@ -21,7 +19,7 @@ router.post(
     body("title").isString().trim().isLength({ min: 3 }).withMessage('Incorrect Title'),
     // body("imageUrl").isURL().withMessage('Incorrect URL'),
     body("price").isFloat().withMessage('Incorrect Price'),
-    body("description").trim().isLength({ min: 8, max: 200 }).withMessage('Incorrect Description'),
+    body("description").trim().isLength({ min: 8, max: 200 }).withMessage('Incorrect Description, Min: 8'),
   ],
   isAuth,
   adminController.postAddProduct
@@ -35,7 +33,7 @@ router.post(
     body("title").isString().trim().isLength({ min: 3 }).withMessage('Incorrect Title'),
     // body("imageUrl").isURL().withMessage('Incorrect URL'),
     body("price").isFloat().withMessage('Incorrect Price'),
-    body("description").trim().isLength({ min: 8, max: 200 }).withMessage('Incorrect Description'),
+    body("description").trim().isLength({ min: 8, max: 200 }).withMessage('Incorrect Description, Min:8'),
   ],
   isAuth,
   adminController.postEditProduct

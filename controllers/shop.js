@@ -247,11 +247,11 @@ exports.getInvoice = (req, res, next) => {
               " - " +
               prod.quantity +
               " x " +
-              "$" +
+              "INR " +
               prod.product.price
           );
       });
-      pdfDoc.text("\n\nTotal Amount: $" + totalPrice);
+      pdfDoc.text("\n\nTotal Amount: INR " + totalPrice);
       pdfDoc.end();
       // MARK: Not a Best Practice to Read Directly
 
